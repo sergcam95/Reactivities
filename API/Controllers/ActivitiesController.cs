@@ -11,6 +11,8 @@ namespace API.Controllers {
 
     public class ActivitiesController : BaseController {
 
+        // TODO: Delete when reaching Secure API module
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<Activity>>> List () {
             return await Mediator.Send (new List.Query ());

@@ -7,6 +7,7 @@ import { IActivity } from "../../../app/models/activity";
 interface IProps {
   activities: IActivity[];
   selectActivity: (id: string) => void;
+  deleteActivity: (id: string) => void;
 }
 
 export const ActivityList: React.FC<IProps> = (props) => {
@@ -30,6 +31,12 @@ export const ActivityList: React.FC<IProps> = (props) => {
                   floated="right"
                   content="View"
                   color="blue"
+                />
+                <Button
+                  onClick={() => props.deleteActivity(activity.id)}
+                  floated="right"
+                  content="Delete"
+                  color="red"
                 />
                 <Label basic content={activity.category} />
               </Item.Extra>
