@@ -1,20 +1,24 @@
-import React from "react";
+import React, { useContext } from "react";
+import { observer } from "mobx-react-lite";
 
 import { Item, Button, Label, Segment } from "semantic-ui-react";
 
-import { IActivity } from "../../../app/models/activity";
+import ActivityStore from "../../../app/stores/activityStore";
 
-interface IProps {
-  activities: IActivity[];
-  selectActivity: (id: string) => void;
-  deleteActivity: (id: string) => void;
-}
+const ActivityList: React.FC = (props) => {
+  const activityStore = useContext(ActivityStore);
+  const {
+    activitiesByDate,
+    selectActivity,
+    submitting,
+    deleteActivity,
+    target,
+  } = activityStore;
 
-export const ActivityList: React.FC<IProps> = (props) => {
   return (
     <Segment clearing>
       <Item.Group divided>
-        {props.activities.map((activity) => (
+        {activitiesByDate.map((activity) => (
           <Item key={activity.id}>
             <Item.Content>
               <Item.Header as="a">{activity.title}</Item.Header>
@@ -27,16 +31,18 @@ export const ActivityList: React.FC<IProps> = (props) => {
               </Item.Description>
               <Item.Extra>
                 <Button
-                  onClick={() => props.selectActivity(activity.id)}
+                  onClick={() => selectActivity(activity.id)}
                   floated="right"
                   content="View"
                   color="blue"
                 />
                 <Button
-                  onClick={() => props.deleteActivity(activity.id)}
+                  name={activity.id}
+                  onClick={(e) => deleteActivity(e, activity.id)}
                   floated="right"
                   content="Delete"
                   color="red"
+                  loading={target === activity.id && submitting}
                 />
                 <Label basic content={activity.category} />
               </Item.Extra>
@@ -47,3 +53,5 @@ export const ActivityList: React.FC<IProps> = (props) => {
     </Segment>
   );
 };
+
+export default observer(ActivityList);
