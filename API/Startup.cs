@@ -42,8 +42,8 @@ namespace API {
             });
 
             // Add MediatR to the services. We use typeof(List.Handler)
-            // in order to locate the assembly that it is going to use
-            // have all the handlers. We could've use any other handler
+            // in order to locate the assembly that ihas
+            // all the handlers. We could've used any other handler
             // inside the assembly
             services.AddMediatR (typeof (List.Handler).Assembly);
 
@@ -74,17 +74,17 @@ namespace API {
             services.AddAuthentication (JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer (opt => {
                     opt.TokenValidationParameters = new TokenValidationParameters {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = key,
-                    ValidateAudience = false,
-                    ValidateIssuer = false
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = key,
+                        ValidateAudience = false,
+                        ValidateIssuer = false
                     };
                 });
 
             // Register JwtGenerator service
             // NOTE: SECURITY
             services.AddScoped<IJwtGenerator, JwtGenerator> ();
-            
+
             services.AddScoped<IUserAccesor, UserAccesor> ();
         }
 

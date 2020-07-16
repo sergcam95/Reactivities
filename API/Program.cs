@@ -19,6 +19,7 @@ namespace API
             // We use all this code to check if the database exists
             // If not, It will create a new database with the existing
             // migrations
+            // We add some data only if the database is empty
             using(var scope = host.Services.CreateScope()){
                 var services = scope.ServiceProvider;
 
