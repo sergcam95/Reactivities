@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers {
 
-    // TODO: Delete when reaching Secure API module
-    [AllowAnonymous]
     public class ActivitiesController : BaseController {
 
         [HttpGet]
