@@ -2,6 +2,7 @@ using System.Text;
 using Application.Activities;
 using Application.Interfaces;
 using API.Middleware;
+using AutoMapper;
 using Domain;
 using FluentValidation.AspNetCore;
 using Infrastructure.Security;
@@ -31,6 +32,7 @@ namespace API {
         public void ConfigureServices (IServiceCollection services) {
             // Database configuration
             services.AddDbContext<DataContext> (opt => {
+                opt.UseLazyLoadingProxies ();
                 opt.UseSqlite (Configuration.GetConnectionString ("DefaultConnection"));
             });
 
@@ -47,6 +49,9 @@ namespace API {
             // inside the assembly
             services.AddMediatR (typeof (List.Handler).Assembly);
 
+            // AutoMapper
+            services.AddAutoMapper (typeof (List.Handler));
+
             // In order to use FluentValidation we need to append
             // .AddFluentValidation to the services.AddControllers()
 
@@ -61,11 +66,22 @@ namespace API {
 
             // AddIdentity is when we are serving Pages with Razer
             // and using Cookies
+            // In this case we use headers from which we receive the token
             // NOTE: SECURITY
             var builder = services.AddIdentityCore<AppUser> ();
             var identityBuilder = new IdentityBuilder (builder.UserType, builder.Services);
             identityBuilder.AddEntityFrameworkStores<DataContext> ();
             identityBuilder.AddSignInManager<SignInManager<AppUser>> ();
+
+            // This is the policy for authorizing users to delete or modify
+            // an activity only if they are the host
+            services.AddAuthorization (opt => {
+                opt.AddPolicy ("IsActivityHost", policy => {
+                    policy.Requirements.Add (new IsHostRequirement ());
+                });
+            });
+
+            services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler> ();
 
             // We need to add the Nuget Package Microsoft.AspNetCore.Authentication.JwtBearer
             // We want to tell our API what what we should be validating when we receive a token
@@ -74,10 +90,10 @@ namespace API {
             services.AddAuthentication (JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer (opt => {
                     opt.TokenValidationParameters = new TokenValidationParameters {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = key,
-                        ValidateAudience = false,
-                        ValidateIssuer = false
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateAudience = false,
+                    ValidateIssuer = false
                     };
                 });
 
@@ -85,7 +101,7 @@ namespace API {
             // NOTE: SECURITY
             services.AddScoped<IJwtGenerator, JwtGenerator> ();
 
-            services.AddScoped<IUserAccesor, UserAccesor> ();
+            services.AddScoped<IUserAccessor, UserAccessor> ();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
