@@ -8,6 +8,7 @@ import App from "./app/layout/App";
 import "./app/layout/styles.css";
 import ScrollToTop from "./app/layout/ScrollToTop";
 
+//  This is for the toasts
 import "react-toastify/dist/ReactToastify.min.css";
 import "react-widgets/dist/css/react-widgets.css";
 
