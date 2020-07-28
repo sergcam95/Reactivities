@@ -5,6 +5,7 @@ using API.Middleware;
 using AutoMapper;
 using Domain;
 using FluentValidation.AspNetCore;
+using Infrastructure.Photos;
 using Infrastructure.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -73,6 +74,8 @@ namespace API {
             identityBuilder.AddEntityFrameworkStores<DataContext> ();
             identityBuilder.AddSignInManager<SignInManager<AppUser>> ();
 
+            #region Authorization for managing an activity
+
             // This is the policy for authorizing users to delete or modify
             // an activity only if they are the host
             services.AddAuthorization (opt => {
@@ -82,6 +85,10 @@ namespace API {
             });
 
             services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler> ();
+
+            #endregion
+
+            #region Authentication
 
             // We need to add the Nuget Package Microsoft.AspNetCore.Authentication.JwtBearer
             // We want to tell our API what what we should be validating when we receive a token
@@ -102,6 +109,15 @@ namespace API {
             services.AddScoped<IJwtGenerator, JwtGenerator> ();
 
             services.AddScoped<IUserAccessor, UserAccessor> ();
+
+            #endregion
+
+            #region Cloudinary Services
+
+            services.Configure<CloudinarySettings> (Configuration.GetSection ("Cloudinary"));
+            services.AddScoped<IPhotoAccessor, PhotoAccessor> ();
+
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -11,6 +11,10 @@ namespace Persistence {
         public DbSet<Activity> Activities { get; set; }
         public DbSet<UserActivity> UserActivities { get; set; }
 
+        // Because this is a one to many relationship and in the AppUser 
+        // class is stored as a virual property there is no need of extra configuration
+        public DbSet<Photo> Photos { get; set; }
+
         protected override void OnModelCreating (ModelBuilder builder) {
 
             // This allows us, when creating a migration,
