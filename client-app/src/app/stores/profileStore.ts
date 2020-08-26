@@ -14,6 +14,7 @@ export default class ProfileStore {
   @observable loadingProfile = true;
   @observable uploadingPhoto = false;
   @observable loading = false;
+  @observable submitting = false;
 
   @computed get isCurrentUser() {
     if (this.rootStore.userStore.user && this.profile) {
@@ -96,6 +97,26 @@ export default class ProfileStore {
       toast.error("Problem deleting the photo");
       runInAction(() => {
         this.loading = false;
+      });
+    }
+  };
+
+  @action updateProfile = async (profile: IProfile) => {
+    this.submitting = true;
+    try {
+      await agent.Profiles.updateProfile(profile);
+      runInAction(() => {
+        // It is important to recreate this property
+        // in order to notify all the components that
+        // it changed
+        this.profile = { ...this.profile!, ...profile };
+        this.rootStore.userStore.user!.displayName = profile.displayName;
+        this.submitting = false;
+      });
+    } catch (error) {
+      toast.error("Problem editing profile");
+      runInAction(() => {
+        this.submitting = false;
       });
     }
   };
