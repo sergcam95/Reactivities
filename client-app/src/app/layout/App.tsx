@@ -17,9 +17,9 @@ import HomePage from "../../features/home/HomePage";
 import ActivityForm from "../../features/activities/form/ActivityForm";
 import ActivityDetails from "../../features/activities/details/ActivityDetails";
 import NotFound from "./NotFound";
-import LoginForm from "../../features/user/LoginForm";
 import { RootStoreContext } from "../stores/rootStore";
 import LoadingComponent from "./LoadingComponent";
+import ProfilePage from "../../features/profiles/ProfilePage";
 import ModalContainer from "../common/modals/ModalContainer";
 
 const App: React.FC<RouteComponentProps> = ({ location }) => {
@@ -56,7 +56,7 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
                   path={["/createActivity", "/manage/:id"]}
                   component={ActivityForm}
                 />
-                <Route path="/login" component={LoginForm} />
+                <Route path="/profile/:username" component={ProfilePage} />
                 <Route component={NotFound} />
               </Switch>
             </Container>

@@ -18,12 +18,14 @@ namespace Application.Activities {
                 _context = context;
             }
 
-            public async Task<Unit> Handle (Command request, CancellationToken cancellationToken) {
+            public async Task<Unit> Handle (Command request,
+                CancellationToken cancellationToken) {
 
                 var activity = await _context.Activities.FindAsync (request.Id);
 
                 if (activity == null)
-                    throw new RestException (HttpStatusCode.NotFound, new { activity = "Not found" });
+                    throw new RestException (HttpStatusCode.NotFound,
+                        new { activity = "Not found" });
 
                 _context.Remove (activity);
 
