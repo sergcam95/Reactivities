@@ -2,20 +2,24 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Persistence {
-    public class DataContext : IdentityDbContext<AppUser> {
+namespace Persistence
+{
+    public class DataContext : IdentityDbContext<AppUser>
+    {
 
         public DataContext (DbContextOptions options) : base (options) { }
 
         public DbSet<Value> Values { get; set; }
         public DbSet<Activity> Activities { get; set; }
         public DbSet<UserActivity> UserActivities { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         // Because this is a one to many relationship and in the AppUser 
         // class is stored as a virual property there is no need of extra configuration
         public DbSet<Photo> Photos { get; set; }
 
-        protected override void OnModelCreating (ModelBuilder builder) {
+        protected override void OnModelCreating (ModelBuilder builder)
+        {
 
             // This allows us, when creating a migration,
             // to give a primary key to the AppUser
