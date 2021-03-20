@@ -1,40 +1,31 @@
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
-namespace Application.Profiles {
-    public class Details {
-        public class Query : IRequest<Profile> {
+namespace Application.Profiles
+{
+    public class Details
+    {
+        public class Query : IRequest<Profile>
+        {
             public string Username { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Profile> {
+        public class Handler : IRequestHandler<Query, Profile>
+        {
 
-            private readonly DataContext _context;
+            private readonly IProfileReader __profileReader;
 
-            public Handler (DataContext context) {
-                _context = context;
+            public Handler (IProfileReader _profileReader)
+            {
+                __profileReader = _profileReader;
             }
 
             public async Task<Profile> Handle (Query request,
-                CancellationToken cancellationToken) {
+                CancellationToken cancellationToken)
+            {
 
-                var user = await _context.Users.SingleOrDefaultAsync (x =>
-                    x.UserName == request.Username);
-
-                // In this case, we map all the properties from AppUser
-                // to Profile.
-                // This also can be achieved by using AutoMapper
-                return new Profile {
-                    DisplayName = user.DisplayName,
-                        Username = user.UserName,
-                        Image = user.Photos.FirstOrDefault (x => x.IsMain)?.Url,
-                        Photos = user.Photos,
-                        Bio = user.Bio
-                };
+                return await __profileReader.ReadProfile (request.Username);
             }
         }
     }
